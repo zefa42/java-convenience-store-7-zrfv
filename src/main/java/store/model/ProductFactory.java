@@ -6,6 +6,7 @@ import store.util.Converter;
 import store.util.Splitter;
 
 public class ProductFactory {
+    public static final String FILE_PATH = "src/main/resources/products.md";
 
     public static List<Product> init(List<String> rawProduct) {
         List<Product> products = new ArrayList<>();

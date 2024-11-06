@@ -9,11 +9,10 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class FileLoader {
-    private static final String FILE_PATH = "src/main/resources/products.md";
 
-    public static List<String> load() throws IOException {
+    public static List<String> load(String path) throws IOException {
         List<String> rawProducts = new ArrayList<>();
-        try (BufferedReader br = new BufferedReader(readFile())) {
+        try (BufferedReader br = new BufferedReader(readFile(path))) {
             br.readLine();
             String line;
             while ((line = br.readLine()) != null) {
@@ -23,7 +22,7 @@ public class FileLoader {
         return rawProducts;
     }
 
-    private static FileReader readFile() throws FileNotFoundException {
-        return new FileReader(new File(FILE_PATH));
+    private static FileReader readFile(String path) throws FileNotFoundException {
+        return new FileReader(new File(path));
     }
 }
