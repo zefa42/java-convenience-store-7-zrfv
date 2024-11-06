@@ -11,14 +11,14 @@ public class Product {
     private final int quantity;
     private final String promotion;
 
-    public Product(final String name, final int price, final int quantity, final String promotion) {
+    private Product(final String name, final int price, final int quantity, final String promotion) {
         this.name = name;
         this.price = price;
         this.quantity = quantity;
         this.promotion = promotion;
     }
 
-    public List<Product> init(List<String> rawProduct) {
+    public static List<Product> init(List<String> rawProduct) {
         List<Product> products = new ArrayList<>();
         for (String line : rawProduct) {
             String[] parts = Splitter.split(line);
@@ -28,5 +28,31 @@ public class Product {
                     parts[3]));
         }
         return products;
+    }
+
+    private String formattedPrice() {
+        return String.format("%,d원 ", price);
+    }
+
+    private String formattedQuantity() {
+        if (quantity > 0) {
+            return quantity + "개";
+        }
+        return "재고 없음";
+    }
+
+    private String formattedPromotion() {
+        if (promotion == null || promotion.equals("null")) {
+            return "";
+        }
+        return " " + promotion;
+    }
+
+    @Override
+    public String toString() {
+        return "- " + name + " "
+                + formattedPrice()
+                + formattedQuantity()
+                + formattedPromotion();
     }
 }
