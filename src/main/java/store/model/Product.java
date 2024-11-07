@@ -18,6 +18,22 @@ public class Product {
         this.promotion = promotion;
     }
 
+    public String getName() {
+        return name;
+    }
+
+    public int getPrice() {
+        return price;
+    }
+
+    public int getQuantity() {
+        return quantity;
+    }
+
+    public String getPromotion() {
+        return promotion;
+    }
+
     private String formattedPrice() {
         return String.format("%,d원 ", price);
     }

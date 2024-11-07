@@ -12,11 +12,22 @@ public class ProductFactory {
         List<Product> products = new ArrayList<>();
         for (String line : rawProduct) {
             String[] parts = Splitter.split(line);
+            addMissingProduct(products, parts);
             products.add(new Product(parts[0],
                     Converter.stringToInt(parts[1]),
                     Converter.stringToInt(parts[2]),
                     parts[3]));
         }
         return products;
+    }
+
+    private static void addMissingProduct(List<Product> products, String[] parts) {
+        if(parts[0].equals("오렌지주스")) {
+            products.add(new Product(parts[0], Converter.stringToInt(parts[1]), 0, null));
+        }
+
+        if(parts[0].equals("탄산수")) {
+            products.add(new Product(parts[0], Converter.stringToInt(parts[1]), 0, null));
+        }
     }
 }
