@@ -4,6 +4,7 @@ import static store.model.ProductFactory.FILE_PATH;
 
 import java.io.IOException;
 import java.util.List;
+import store.model.Order;
 import store.model.Product;
 import store.model.ProductFactory;
 import store.model.Store;
@@ -32,5 +33,7 @@ public class StoreController {
         outputView.printWelcomeMessage();
         Store store = new Store(initProduct());
         outputView.printProduct(store);
+
+        Order order = new Order(inputView.inputPurchase());
     }
 }

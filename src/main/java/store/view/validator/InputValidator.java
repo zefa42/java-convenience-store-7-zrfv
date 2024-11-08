@@ -14,5 +14,9 @@ public class InputValidator {
         if (!(input.startsWith("[") && input.endsWith("]"))) {
             throw new IllegalArgumentException(PRODUCT_FORMAT_ERROR_MESSAGE);
         }
+
+        if (!input.contains("-")) {
+            throw new IllegalArgumentException(PRODUCT_FORMAT_ERROR_MESSAGE);
+        }
     }
 }
