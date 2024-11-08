@@ -1,10 +1,5 @@
 package store.model;
 
-import java.util.ArrayList;
-import java.util.List;
-import store.util.Converter;
-import store.util.Splitter;
-
 public class Product {
     private final String name;
     private final int price;
@@ -16,6 +11,7 @@ public class Product {
         this.price = price;
         this.quantity = quantity;
         this.promotion = promotion;
+        ProductName.add(name);
     }
 
     public String getName() {
