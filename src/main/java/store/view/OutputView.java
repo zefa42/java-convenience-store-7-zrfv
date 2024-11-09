@@ -17,5 +17,6 @@ public class OutputView {
         for (Product product : store.getProducts()) {
             System.out.println(product);
         }
+        System.out.println();
     }
 }

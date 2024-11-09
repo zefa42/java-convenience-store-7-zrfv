@@ -29,11 +29,20 @@ public class StoreController {
         }
     }
 
+    private Order readPurchase(Store store) {
+        try {
+            return new Order(inputView.inputPurchase(), store);
+        }catch (IllegalArgumentException e) {
+            System.out.println(e.getMessage());
+            return readPurchase(store);
+        }
+    }
+
     public void run() {
         outputView.printWelcomeMessage();
         Store store = new Store(initProduct());
         outputView.printProduct(store);
 
-        Order order = new Order(inputView.inputPurchase());
+        Order order = readPurchase(store);
     }
 }

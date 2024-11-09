@@ -3,7 +3,7 @@ package store.model;
 public class Product {
     private final String name;
     private final int price;
-    private final int quantity;
+    private int quantity;
     private final String promotion;
 
     Product(final String name, final int price, final int quantity, final String promotion) {
@@ -14,16 +14,25 @@ public class Product {
         ProductName.add(name);
     }
 
+    // Getter 메서드
+    public boolean isPromotional() {
+        return !(promotion == null || promotion.equals("null"));
+    }
+
+    public int getQuantity() {
+        return quantity;
+    }
+
+    public void reduceQuantity(int amount) {
+        quantity -= amount;
+    }
+
     public String getName() {
         return name;
     }
 
     public int getPrice() {
         return price;
-    }
-
-    public int getQuantity() {
-        return quantity;
     }
 
     public String getPromotion() {
