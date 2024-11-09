@@ -14,6 +14,7 @@ public class Order {
     private static final Pattern PURCHASE_PATTERN = Pattern.compile("\\[(\\S+)-(\\d+)\\]");
     private static final String INVALID_PRODUCT_NAME = "[ERROR] 존재하지 않는 상품입니다. 다시 입력해 주세요.";
     private static final String INVALID_QUANTITY = "[ERROR] 재고 수량을 초과하여 구매할 수 없습니다. 다시 입력해 주세요.";
+    private static final String NOT_POSITIVE_QUANTITY = "[ERROR] 잘못된 입력입니다. 다시 입력해 주세요.";
 
     private final String inputPurchase;
     private final Store store;
@@ -59,6 +60,7 @@ public class Order {
     private void validateProductQuantity(Matcher matcher, Store store) {
         String productName = matcher.group(1);
         int requestedQuantity = Converter.stringToInt(matcher.group(2));
+        validateZeroQuantity(requestedQuantity);
 
         List<Product> promotionalProducts = getPromotionalProducts(productName, store);
         List<Product> regularProducts = getRegularProducts(productName, store);
@@ -68,6 +70,12 @@ public class Order {
 
         if (remainingQuantity > 0) {
             throw new IllegalArgumentException(INVALID_QUANTITY);
+        }
+    }
+
+    private void validateZeroQuantity(int quantity) {
+        if(quantity < 1) {
+            throw new IllegalArgumentException(NOT_POSITIVE_QUANTITY);
         }
     }
 

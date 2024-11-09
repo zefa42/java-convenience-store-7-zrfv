@@ -14,7 +14,6 @@ public class Product {
         ProductName.add(name);
     }
 
-    // Getter 메서드
     public boolean isPromotional() {
         return !(promotion == null || promotion.equals("null"));
     }

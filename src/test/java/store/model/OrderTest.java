@@ -42,4 +42,12 @@ class OrderTest {
         assertThatThrownBy(() -> new Order(input, store))
                 .isInstanceOf(IllegalArgumentException.class);
     }
+
+    @ParameterizedTest
+    @ValueSource(strings = {"[감자칩-0]", "[초코바-00]"})
+    void 구매_수량이_1_미만이면_예외가_발생한다(String input) {
+        Store store = initStore();
+        assertThatThrownBy(() -> new Order(input, store))
+                .isInstanceOf(IllegalArgumentException.class);
+    }
 }
