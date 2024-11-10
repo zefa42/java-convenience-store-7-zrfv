@@ -10,17 +10,17 @@ public class Purchase {
         this.quantity = quantity;
     }
 
-//    public void setPurchasedQuantity(int quantity) {
-//        this.quantity = quantity;
-//    }
-//
-//    public void addPurchasedQuantity(int additionalQuantity) {
-//        this.quantity += additionalQuantity;
-//    }
-//
-//    public void addFreeQuantity(int additionalFreeQuantity) {
-//        this.freeQuantity += additionalFreeQuantity;
-//    }
+    public void setPurchasedQuantity(int quantity) {
+        this.quantity = quantity;
+    }
+
+    public void addPurchasedQuantity(int additionalQuantity) {
+        this.quantity += additionalQuantity;
+    }
+
+    public void addFreeQuantity(int additionalFreeQuantity) {
+        this.freeQuantity += additionalFreeQuantity;
+    }
 
     public void setFreeQuantity(int freeQuantity) {
         this.freeQuantity = freeQuantity;

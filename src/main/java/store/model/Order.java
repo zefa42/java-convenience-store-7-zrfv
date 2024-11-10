@@ -85,7 +85,7 @@ public class Order {
     public void adjustPurchasesForPromotion(InputView inputView) {
         for (Purchase purchase : purchases) {
             String productName = purchase.getProductName();
-            int requestedQuantity = purchase.getPurchasedQuantity();
+            int totalQuantity = purchase.getPurchasedQuantity();
 
             List<Product> promotionalProducts = store.getPromotionalProductsByName(productName);
             Optional<Promotion> optionalPromotion = Optional.empty();
@@ -100,22 +100,29 @@ public class Order {
                 int promotionBuy = promotion.getBuy();
                 int promotionGet = promotion.getGet();
 
-                int maxPromotionApplications = store.getMaxPromotionApplications(productName, promotion);
+                int totalPromotionSet = promotionBuy + promotionGet;
+                int numberOfPromotions = totalQuantity / totalPromotionSet;
+                int freeQuantity = numberOfPromotions * promotionGet;
+                int purchasedQuantity = numberOfPromotions * promotionBuy;
 
-                int possiblePromotionApplications = requestedQuantity / promotionBuy;
-                int remainder = requestedQuantity % promotionBuy;
+                int remainder = totalQuantity % totalPromotionSet;
 
-                if (requestedQuantity == promotionBuy) {
+                if (remainder >= promotionBuy) {
                     System.out.printf("현재 %s은(는) %d개를 무료로 받으실 수 있습니다. 추가하시겠습니까? (Y/N)\n", productName, promotionGet);
                     String response = inputView.inputYesOrNo();
                     if (response.equalsIgnoreCase("Y")) {
-                        purchase.setFreeQuantity(promotionGet);
+                        purchasedQuantity += promotionBuy;
+                        freeQuantity += promotionGet;
+                        numberOfPromotions += 1;
+                    } else {
+                        purchasedQuantity += remainder;
                     }
-                } else if (possiblePromotionApplications > 0) {
-                    int actualPromotionApplications = Math.min(possiblePromotionApplications, maxPromotionApplications);
-                    int freeQuantity = actualPromotionApplications * promotionGet;
-                    purchase.setFreeQuantity(freeQuantity);
+                } else if (remainder > 0 && remainder < promotionBuy) {
+
+                    purchasedQuantity += remainder;
                 }
+                purchase.setPurchasedQuantity(purchasedQuantity);
+                purchase.setFreeQuantity(freeQuantity);
             }
         }
     }
@@ -124,11 +131,21 @@ public class Order {
         for (Purchase purchase : purchases) {
             String productName = purchase.getProductName();
             int purchasedQuantity = purchase.getPurchasedQuantity();
-            int remainingQuantity = reduceProductStock(productName, purchasedQuantity, true);
-            if (remainingQuantity > 0) {
-                remainingQuantity = reduceProductStock(productName, remainingQuantity, false);
-                if (remainingQuantity > 0) {
+            int freeQuantity = purchase.getFreeQuantity();
+
+            int remainingPurchased = reduceProductStock(productName, purchasedQuantity, true);
+            if (remainingPurchased > 0) {
+                remainingPurchased = reduceProductStock(productName, remainingPurchased, false);
+                if (remainingPurchased > 0) {
                     throw new IllegalArgumentException(INVALID_QUANTITY);
+                }
+            }
+
+            if (freeQuantity > 0) {
+                int remainingFree = reduceProductStock(productName, freeQuantity, true);
+                if (remainingFree > 0) {
+                    System.out.printf("현재 %s %d개는 프로모션 할인이 적용되지 않습니다. 그래도 구매하시겠습니까? (Y/N)\n", productName, remainingFree);
+                    purchase.setFreeQuantity(freeQuantity - remainingFree);
                 }
             }
         }
@@ -147,20 +164,18 @@ public class Order {
                 remainingQuantity -= quantityToReduce;
             }
         }
-
         return remainingQuantity;
     }
 
-
     public int calculateTotalAmount() {
-        int totalAmount = 0;
+        int totalMoney = 0;
         for (Purchase purchase : purchases) {
             String productName = purchase.getProductName();
-            int purchasedQuantity = purchase.getPurchasedQuantity();
+            int totalQuantity = purchase.getPurchasedQuantity() + purchase.getFreeQuantity();
             int price = store.getProductPriceByName(productName);
-            totalAmount += price * purchasedQuantity;
+            totalMoney += price * totalQuantity;
         }
-        return totalAmount;
+        return totalMoney;
     }
 
     public int calculatePromotionDiscount() {
@@ -189,7 +204,6 @@ public class Order {
         return Math.min((int) (nonPromotionalAmount * 0.3), 8000);
     }
 
-
     public String getOrderSummary(int totalAmount, int promotionDiscount, int membershipDiscount) {
         StringBuilder summary = new StringBuilder();
         summary.append("==============W 편의점================\n");
@@ -197,8 +211,11 @@ public class Order {
         for (Purchase purchase : purchases) {
             String productName = purchase.getProductName();
             int purchasedQuantity = purchase.getPurchasedQuantity();
+            int freeQuantity = purchase.getFreeQuantity();
+            int totalQuantity = purchasedQuantity + freeQuantity;
             int price = store.getProductPriceByName(productName);
-            summary.append(String.format("%s\t\t\t\t%d\t\t\t%,d\n", productName, purchasedQuantity, price * purchasedQuantity));
+            int totalPrice = price * totalQuantity; // 총 금액
+            summary.append(String.format("%s\t\t\t\t%d\t\t\t%,d\n", productName, totalQuantity, totalPrice));
         }
         summary.append("=============증\t정===============\n");
         for (Purchase purchase : purchases) {
@@ -220,7 +237,7 @@ public class Order {
     public int getTotalQuantity() {
         int totalQuantity = 0;
         for (Purchase purchase : purchases) {
-            totalQuantity += purchase.getPurchasedQuantity();
+            totalQuantity += (purchase.getPurchasedQuantity() + purchase.getFreeQuantity());
         }
         return totalQuantity;
     }

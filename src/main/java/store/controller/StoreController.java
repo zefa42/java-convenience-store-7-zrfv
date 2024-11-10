@@ -60,12 +60,12 @@ public class StoreController {
             order.adjustPurchasesForPromotion(inputView);
 
             boolean isMember = inputView.inputMembership();
-            int totalAmount = order.calculateTotalAmount();
+            int totalMoney = order.calculateTotalAmount();
             int promotionDiscount = order.calculatePromotionDiscount();
             int membershipDiscount = order.calculateMembershipDiscount(isMember);
 
             order.reduceStock();
-            outputView.printOrderResult(order, totalAmount, promotionDiscount, membershipDiscount);
+            outputView.printOrderResult(order, totalMoney, promotionDiscount, membershipDiscount);
             continueShopping = inputView.inputContinueShopping();
         }
     }
