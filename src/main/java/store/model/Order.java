@@ -177,13 +177,18 @@ public class Order {
     public int calculateMembershipDiscount(boolean isMember) {
         if (!isMember) return 0;
 
-        int totalAmount = calculateTotalAmount();
-        int promotionDiscount = calculatePromotionDiscount();
-        int nonPromotionalAmount = totalAmount - promotionDiscount;
-
-        int membershipDiscount = (int) (nonPromotionalAmount * 0.3);
-        return Math.min(membershipDiscount, 8000);
+        int nonPromotionalAmount = 0;
+        for (Purchase purchase : purchases) {
+            String productName = purchase.getProductName();
+            int price = store.getProductPriceByName(productName);
+            boolean isPromotionalProduct = store.isProductPromotional(productName);
+            if (!isPromotionalProduct) {
+                nonPromotionalAmount += price * purchase.getPurchasedQuantity();
+            }
+        }
+        return Math.min((int) (nonPromotionalAmount * 0.3), 8000);
     }
+
 
     public String getOrderSummary(int totalAmount, int promotionDiscount, int membershipDiscount) {
         StringBuilder summary = new StringBuilder();

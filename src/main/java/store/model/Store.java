@@ -56,4 +56,10 @@ public class Store {
                 .mapToInt(Product::getQuantity)
                 .sum();
     }
+
+    public boolean isProductPromotional(String productName) {
+        return products.stream()
+                .filter(p -> p.getName().equals(productName))
+                .anyMatch(Product::isPromotional);
+    }
 }
