@@ -52,10 +52,17 @@ public class StoreController {
         outputView.printWelcomeMessage();
         Store store = new Store(initProduct());
         initPromotion();
-        outputView.printProduct(store);
 
+        outputView.printProduct(store);
         Order order = readPurchase(store);
         order.adjustPurchasesForPromotion(inputView);
+
+        boolean isMember = inputView.inputMembership();
+        int totalAmount = order.calculateTotalAmount();
+        int promotionDiscount = order.calculatePromotionDiscount();
+        int membershipDiscount = order.calculateMembershipDiscount(isMember);
+
         order.reduceStock();
+        outputView.printOrderResult(order, totalAmount, promotionDiscount, membershipDiscount);
     }
 }

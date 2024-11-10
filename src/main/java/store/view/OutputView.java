@@ -20,4 +20,8 @@ public class OutputView {
         }
         System.out.println();
     }
+
+    public void printOrderResult(Order order, int totalAmount, int promotionDiscount, int membershipDiscount) {
+        System.out.println(order.getOrderSummary(totalAmount, promotionDiscount, membershipDiscount));
+    }
 }

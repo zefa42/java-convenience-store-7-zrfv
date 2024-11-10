@@ -187,4 +187,39 @@ public class Order {
         int membershipDiscount = (int) (nonPromotionalAmount * 0.3);
         return Math.min(membershipDiscount, 8000);
     }
+
+    public String getOrderSummary(int totalAmount, int promotionDiscount, int membershipDiscount) {
+        StringBuilder summary = new StringBuilder();
+        summary.append("==============W 편의점================\n");
+        summary.append("상품명\t\t\t\t수량\t\t\t금액\n");
+        for (Purchase purchase : purchases) {
+            String productName = purchase.getProductName();
+            int purchasedQuantity = purchase.getPurchasedQuantity();
+            int price = store.getProductPriceByName(productName);
+            summary.append(String.format("%s\t\t\t\t%d\t\t\t%,d\n", productName, purchasedQuantity, price * purchasedQuantity));
+        }
+        summary.append("=============증\t정===============\n");
+        for (Purchase purchase : purchases) {
+            int freeQuantity = purchase.getFreeQuantity();
+            if (freeQuantity > 0) {
+                String productName = purchase.getProductName();
+                summary.append(String.format("%s\t\t\t\t%d\n", productName, freeQuantity));
+            }
+        }
+        summary.append("====================================\n");
+        int finalAmount = totalAmount - promotionDiscount - membershipDiscount;
+        summary.append(String.format("총구매액\t\t\t\t%d\t\t\t%,d\n", getTotalQuantity(), totalAmount));
+        summary.append(String.format("행사할인\t\t\t\t\t\t\t-%,d\n", promotionDiscount));
+        summary.append(String.format("멤버십할인\t\t\t\t\t\t-%,d\n", membershipDiscount));
+        summary.append(String.format("내실돈\t\t\t\t\t\t\t%,d\n", finalAmount));
+        return summary.toString();
+    }
+
+    public int getTotalQuantity() {
+        int totalQuantity = 0;
+        for (Purchase purchase : purchases) {
+            totalQuantity += purchase.getPurchasedQuantity();
+        }
+        return totalQuantity;
+    }
 }
