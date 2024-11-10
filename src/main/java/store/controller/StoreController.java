@@ -53,16 +53,20 @@ public class StoreController {
         Store store = new Store(initProduct());
         initPromotion();
 
-        outputView.printProduct(store);
-        Order order = readPurchase(store);
-        order.adjustPurchasesForPromotion(inputView);
+        boolean continueShopping = true;
+        while (continueShopping) {
+            outputView.printProduct(store);
+            Order order = readPurchase(store);
+            order.adjustPurchasesForPromotion(inputView);
 
-        boolean isMember = inputView.inputMembership();
-        int totalAmount = order.calculateTotalAmount();
-        int promotionDiscount = order.calculatePromotionDiscount();
-        int membershipDiscount = order.calculateMembershipDiscount(isMember);
+            boolean isMember = inputView.inputMembership();
+            int totalAmount = order.calculateTotalAmount();
+            int promotionDiscount = order.calculatePromotionDiscount();
+            int membershipDiscount = order.calculateMembershipDiscount(isMember);
 
-        order.reduceStock();
-        outputView.printOrderResult(order, totalAmount, promotionDiscount, membershipDiscount);
+            order.reduceStock();
+            outputView.printOrderResult(order, totalAmount, promotionDiscount, membershipDiscount);
+            continueShopping = inputView.inputContinueShopping();
+        }
     }
 }
