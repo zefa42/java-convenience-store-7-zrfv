@@ -18,17 +18,23 @@ public class InputView {
     public boolean inputMembership() {
         System.out.println(MEMBERSHIP_MESSAGE);
         String input = Console.readLine();
-        return input.equalsIgnoreCase("Y");
+        InputValidator.validateEmptyInput(input);
+        InputValidator.validateYesOrNo(input);
+        return input.equals("Y");
     }
 
     public boolean inputContinueShopping() {
         System.out.println(CONTINUE_SHOPPING_MESSAGE);
         String input = Console.readLine();
-        return input.equalsIgnoreCase("Y");
+        InputValidator.validateEmptyInput(input);
+        InputValidator.validateYesOrNo(input);
+        return input.equals("Y");
     }
 
-    public String inputYesOrNo() {
+    public String inputAddFreePromotion() {
         String input = Console.readLine();
+        InputValidator.validateEmptyInput(input);
+        InputValidator.validateYesOrNo(input);
         return input;
     }
 

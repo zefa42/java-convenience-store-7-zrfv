@@ -109,8 +109,8 @@ public class Order {
 
                 if (remainder >= promotionBuy) {
                     System.out.printf("현재 %s은(는) %d개를 무료로 받으실 수 있습니다. 추가하시겠습니까? (Y/N)\n", productName, promotionGet);
-                    String response = inputView.inputYesOrNo();
-                    if (response.equalsIgnoreCase("Y")) {
+                    String response = inputView.inputAddFreePromotion();
+                    if (response.equals("Y")) {
                         purchasedQuantity += promotionBuy;
                         freeQuantity += promotionGet;
                         numberOfPromotions += 1;

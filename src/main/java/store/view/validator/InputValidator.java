@@ -19,4 +19,10 @@ public class InputValidator {
             throw new IllegalArgumentException(PRODUCT_FORMAT_ERROR_MESSAGE);
         }
     }
+
+    public static void validateYesOrNo(String input) {
+        if (!(input.equals("Y")) && !(input.equals("N"))) {
+            throw new IllegalArgumentException(PRODUCT_FORMAT_ERROR_MESSAGE);
+        }
+    }
 }

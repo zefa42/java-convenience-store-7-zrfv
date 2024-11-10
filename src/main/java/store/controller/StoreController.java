@@ -67,6 +67,8 @@ public class StoreController {
             order.reduceStock();
             outputView.printOrderResult(order, totalMoney, promotionDiscount, membershipDiscount);
             continueShopping = inputView.inputContinueShopping();
+
+            inputView.close();
         }
     }
 }
