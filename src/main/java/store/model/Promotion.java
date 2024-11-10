@@ -68,6 +68,6 @@ public class Promotion {
     }
 
     public LocalDate getEnd_date() {
-        return start_date;
+        return end_date;
     }
 }
