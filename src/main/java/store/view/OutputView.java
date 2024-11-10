@@ -1,5 +1,6 @@
 package store.view;
 
+import store.model.Order;
 import store.model.Product;
 import store.model.Store;
 

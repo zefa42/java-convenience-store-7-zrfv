@@ -1,12 +1,14 @@
 package store.controller;
 
-import static store.model.ProductFactory.FILE_PATH;
+import static store.model.ProductFactory.PRODUCT_FILE_PATH;
+import static store.model.Promotion.PROMOTION_FILE_PATH;
 
 import java.io.IOException;
 import java.util.List;
 import store.model.Order;
 import store.model.Product;
 import store.model.ProductFactory;
+import store.model.Promotion;
 import store.model.Store;
 import store.util.FileLoader;
 import store.view.InputView;
@@ -23,7 +25,7 @@ public class StoreController {
 
     private List<Product> initProduct() {
         try {
-            return ProductFactory.init(FileLoader.load(FILE_PATH));
+            return ProductFactory.init(FileLoader.load(PRODUCT_FILE_PATH));
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
@@ -38,11 +40,22 @@ public class StoreController {
         }
     }
 
+    private void initPromotion() {
+        try {
+            Promotion.init(FileLoader.load(PROMOTION_FILE_PATH));
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
     public void run() {
         outputView.printWelcomeMessage();
         Store store = new Store(initProduct());
+        initPromotion();
         outputView.printProduct(store);
 
         Order order = readPurchase(store);
+        order.adjustPurchasesForPromotion(inputView);
+        order.reduceStock();
     }
 }

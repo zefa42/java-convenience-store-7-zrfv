@@ -15,7 +15,8 @@ public class PromotionTest {
                 "탄산2+1,2,1,2024-01-01,2024-12-31",
                 "MD추천상품,1,1,2024-01-01,2024-12-31"
         );
-        List<Promotion> promotions = Promotion.init(rawPromotions);
+        Promotion.init(rawPromotions);
+        List<Promotion> promotions = Promotion.getPromotions();
 
         Promotion firstPromotion = promotions.get(0);
         assertEquals("탄산2+1", firstPromotion.getName());

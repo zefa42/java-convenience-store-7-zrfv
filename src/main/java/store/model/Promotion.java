@@ -1,14 +1,16 @@
 package store.model;
 
-import java.text.SimpleDateFormat;
+import camp.nextstep.edu.missionutils.DateTimes;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import store.util.Converter;
 import store.util.Splitter;
 
 public class Promotion {
-    private static final String FILE_PATH = "src/main/resources/promotions.md";
+    public static final String PROMOTION_FILE_PATH = "src/main/resources/promotions.md";
+    private static List<Promotion> promotions = new ArrayList<>();
 
     private final String name;
     private final int buy;
@@ -24,8 +26,8 @@ public class Promotion {
         this.end_date = end_date;
     }
 
-    public static List<Promotion> init(List<String> rawPromotion) {
-        List<Promotion> promotions = new ArrayList<>();
+    public static void init(List<String> rawPromotion) {
+        promotions = new ArrayList<>();
         for (String line : rawPromotion) {
             String[] parts = Splitter.split(line);
             promotions.add(new Promotion(parts[0],
@@ -34,6 +36,18 @@ public class Promotion {
                     Converter.stringToDate(parts[3]),
                     Converter.stringToDate(parts[4])));
         }
+    }
+
+    public static Optional<Promotion> getPromotionByName(String promotionName) {
+        LocalDate currentDate = LocalDate.from(DateTimes.now());
+        return promotions.stream()
+                .filter(promo -> promo.getName().equals(promotionName)
+                        && (currentDate.isEqual(promo.getStart_date()) || currentDate.isAfter(promo.getStart_date()))
+                        && (currentDate.isEqual(promo.getEnd_date()) || currentDate.isBefore(promo.getEnd_date())))
+                .findFirst();
+    }
+
+    public static List<Promotion> getPromotions() {
         return promotions;
     }
 
@@ -41,11 +55,19 @@ public class Promotion {
         return name;
     }
 
+    public int getBuy() {
+        return buy;
+    }
+
+    public int getGet() {
+        return get;
+    }
+
     public LocalDate getStart_date() {
         return start_date;
     }
 
     public LocalDate getEnd_date() {
-        return end_date;
+        return start_date;
     }
 }

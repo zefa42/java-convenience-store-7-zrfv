@@ -1,6 +1,5 @@
 package store.model;
 
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import store.util.FileLoader;
 
@@ -14,7 +13,7 @@ class ProductTest {
 
     @Test
     void 불러온_파일을_형식에_맞게_출력한다() throws IOException {
-        List<String> rawProducts = FileLoader.load(ProductFactory.FILE_PATH).subList(0, 3);
+        List<String> rawProducts = FileLoader.load(ProductFactory.PRODUCT_FILE_PATH).subList(0, 3);
         List<Product> products = ProductFactory.init(rawProducts);
         List<String> expectedOutput = List.of(
                 "- 콜라 1,000원 10개 탄산2+1",

@@ -13,6 +13,11 @@ public class InputView {
         return input;
     }
 
+    public String inputYesOrNo() {
+        String input = Console.readLine();
+        return input;
+    }
+
     public static void close() {
         Console.close();
     }

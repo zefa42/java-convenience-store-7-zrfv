@@ -1,7 +1,7 @@
 package store.model;
 
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
-import static store.model.ProductFactory.FILE_PATH;
+import static store.model.ProductFactory.PRODUCT_FILE_PATH;
 
 import java.io.IOException;
 import java.util.List;
@@ -12,7 +12,7 @@ import store.util.FileLoader;
 class OrderTest {
     private Store initStore() {
         try {
-            List<Product> products = ProductFactory.init(FileLoader.load(FILE_PATH));
+            List<Product> products = ProductFactory.init(FileLoader.load(PRODUCT_FILE_PATH));
             return new Store(products);
         } catch (IOException e) {
             throw new RuntimeException(e);
