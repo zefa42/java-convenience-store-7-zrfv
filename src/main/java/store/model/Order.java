@@ -14,6 +14,8 @@ public class Order {
     private static final String INVALID_PRODUCT_NAME = "[ERROR] 존재하지 않는 상품입니다. 다시 입력해 주세요.";
     private static final String INVALID_QUANTITY = "[ERROR] 재고 수량을 초과하여 구매할 수 없습니다. 다시 입력해 주세요.";
     private static final String NOT_POSITIVE_QUANTITY = "[ERROR] 잘못된 입력입니다. 다시 입력해 주세요.";
+    private static final String ADD_ADDITIONAL_PROMOTION = "현재 %s은(는) %d개를 무료로 받으실 수 있습니다. 추가하시겠습니까? (Y/N)\n";
+    private static final String ASK_NO_PROMOTION = "현재 %s %d개는 프로모션 할인이 적용되지 않습니다. 그래도 구매하시겠습니까? (Y/N)\n";
 
     private final String inputPurchase;
     private final Store store;
@@ -108,8 +110,16 @@ public class Order {
                 int remainder = totalQuantity % totalPromotionSet;
 
                 if (remainder >= promotionBuy) {
-                    System.out.printf("현재 %s은(는) %d개를 무료로 받으실 수 있습니다. 추가하시겠습니까? (Y/N)\n", productName, promotionGet);
-                    String response = inputView.inputAddFreePromotion();
+                    System.out.printf(ADD_ADDITIONAL_PROMOTION, productName, promotionGet);
+                    String response;
+                    while(true) {
+                        try {
+                            response = inputView.inputAddFreePromotion();
+                            break;
+                        } catch (IllegalArgumentException e) {
+                            System.out.println(e.getMessage());
+                        }
+                    }
                     if (response.equals("Y")) {
                         purchasedQuantity += promotionBuy;
                         freeQuantity += promotionGet;
@@ -144,7 +154,7 @@ public class Order {
             if (freeQuantity > 0) {
                 int remainingFree = reduceProductStock(productName, freeQuantity, true);
                 if (remainingFree > 0) {
-                    System.out.printf("현재 %s %d개는 프로모션 할인이 적용되지 않습니다. 그래도 구매하시겠습니까? (Y/N)\n", productName, remainingFree);
+                    System.out.printf(ASK_NO_PROMOTION, productName, remainingFree);
                     purchase.setFreeQuantity(freeQuantity - remainingFree);
                 }
             }
@@ -172,8 +182,7 @@ public class Order {
         for (Purchase purchase : purchases) {
             String productName = purchase.getProductName();
             int totalQuantity = purchase.getPurchasedQuantity() + purchase.getFreeQuantity();
-            int price = store.getProductPriceByName(productName);
-            totalMoney += price * totalQuantity;
+            totalMoney += store.getProductPriceByName(productName) * totalQuantity;
         }
         return totalMoney;
     }
@@ -182,23 +191,20 @@ public class Order {
         int discount = 0;
         for (Purchase purchase : purchases) {
             String productName = purchase.getProductName();
-            int freeQuantity = purchase.getFreeQuantity();
-            int price = store.getProductPriceByName(productName);
-            discount += price * freeQuantity;
+            discount += store.getProductPriceByName(productName) * purchase.getFreeQuantity();
         }
         return discount;
     }
 
     public int calculateMembershipDiscount(boolean isMember) {
-        if (!isMember) return 0;
-
+        if (!isMember) {
+            return 0;
+        }
         int nonPromotionalAmount = 0;
         for (Purchase purchase : purchases) {
             String productName = purchase.getProductName();
-            int price = store.getProductPriceByName(productName);
-            boolean isPromotionalProduct = store.isProductPromotional(productName);
-            if (!isPromotionalProduct) {
-                nonPromotionalAmount += price * purchase.getPurchasedQuantity();
+            if (!store.isProductPromotional(productName)) {
+                nonPromotionalAmount += store.getProductPriceByName(productName) * purchase.getPurchasedQuantity();
             }
         }
         return Math.min((int) (nonPromotionalAmount * 0.3), 8000);

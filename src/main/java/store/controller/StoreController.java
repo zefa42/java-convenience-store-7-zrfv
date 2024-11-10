@@ -48,6 +48,24 @@ public class StoreController {
         }
     }
 
+    private boolean readContinue() {
+        try {
+            return inputView.inputContinueShopping();
+        } catch (IllegalArgumentException e) {
+            System.out.println(e.getMessage());
+            return readContinue();
+        }
+    }
+
+    private boolean readMembership() {
+        try {
+            return inputView.inputMembership();
+        } catch (IllegalArgumentException e) {
+            System.out.println(e.getMessage());
+            return readMembership();
+        }
+    }
+
     public void run() {
         outputView.printWelcomeMessage();
         Store store = new Store(initProduct());
@@ -59,16 +77,15 @@ public class StoreController {
             Order order = readPurchase(store);
             order.adjustPurchasesForPromotion(inputView);
 
-            boolean isMember = inputView.inputMembership();
+            boolean isMember = readMembership();
             int totalMoney = order.calculateTotalAmount();
             int promotionDiscount = order.calculatePromotionDiscount();
             int membershipDiscount = order.calculateMembershipDiscount(isMember);
 
             order.reduceStock();
             outputView.printOrderResult(order, totalMoney, promotionDiscount, membershipDiscount);
-            continueShopping = inputView.inputContinueShopping();
-
-            inputView.close();
+            continueShopping = readContinue();
         }
+        inputView.close();
     }
 }
