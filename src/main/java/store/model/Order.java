@@ -154,4 +154,37 @@ public class Order {
 
         return remainingQuantity == 0;
     }
+
+    public int calculateTotalAmount() {
+        int totalAmount = 0;
+        for (Purchase purchase : purchases) {
+            String productName = purchase.getProductName();
+            int purchasedQuantity = purchase.getPurchasedQuantity();
+            int price = store.getProductPriceByName(productName);
+            totalAmount += price * purchasedQuantity;
+        }
+        return totalAmount;
+    }
+
+    public int calculatePromotionDiscount() {
+        int discount = 0;
+        for (Purchase purchase : purchases) {
+            String productName = purchase.getProductName();
+            int freeQuantity = purchase.getFreeQuantity();
+            int price = store.getProductPriceByName(productName);
+            discount += price * freeQuantity;
+        }
+        return discount;
+    }
+
+    public int calculateMembershipDiscount(boolean isMember) {
+        if (!isMember) return 0;
+
+        int totalAmount = calculateTotalAmount();
+        int promotionDiscount = calculatePromotionDiscount();
+        int nonPromotionalAmount = totalAmount - promotionDiscount;
+
+        int membershipDiscount = (int) (nonPromotionalAmount * 0.3);
+        return Math.min(membershipDiscount, 8000);
+    }
 }

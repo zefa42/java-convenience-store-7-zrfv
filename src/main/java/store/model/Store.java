@@ -48,4 +48,12 @@ public class Store {
                 .mapToInt(Product::getQuantity)
                 .sum();
     }
+
+    public int getProductPriceByName(String productName) {
+        return products.stream()
+                .filter(p -> p.getName().equals(productName))
+                .findFirst()
+                .map(Product::getPrice)
+                .orElse(0);
+    }
 }
