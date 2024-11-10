@@ -124,21 +124,17 @@ public class Order {
         for (Purchase purchase : purchases) {
             String productName = purchase.getProductName();
             int purchasedQuantity = purchase.getPurchasedQuantity();
-            int freeQuantity = purchase.getFreeQuantity();
-
-            reduceProductStock(productName, purchasedQuantity, false);
-            if (freeQuantity > 0) {
-                boolean promotionStockAvailable = reduceProductStock(productName, freeQuantity, true);
-                if (!promotionStockAvailable) {
-                    System.out.printf("현재 %s %d개는 프로모션 할인이 적용되지 않습니다. 그래도 구매하시겠습니까? (Y/N)\n", productName, purchasedQuantity);
-                    // 프로모션 적용 x 에 대한 기능 구현
-                    purchase.setFreeQuantity(0);
+            int remainingQuantity = reduceProductStock(productName, purchasedQuantity, true);
+            if (remainingQuantity > 0) {
+                remainingQuantity = reduceProductStock(productName, remainingQuantity, false);
+                if (remainingQuantity > 0) {
+                    throw new IllegalArgumentException(INVALID_QUANTITY);
                 }
             }
         }
     }
 
-    private boolean reduceProductStock(String productName, int quantity, boolean isPromotion) {
+    private int reduceProductStock(String productName, int quantity, boolean isPromotion) {
         List<Product> products = isPromotion ?
                 store.getPromotionalProductsByName(productName) :
                 store.getRegularProductsByName(productName);
@@ -152,8 +148,9 @@ public class Order {
             }
         }
 
-        return remainingQuantity == 0;
+        return remainingQuantity;
     }
+
 
     public int calculateTotalAmount() {
         int totalAmount = 0;

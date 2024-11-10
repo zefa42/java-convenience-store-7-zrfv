@@ -14,6 +14,14 @@ public class Store {
         return products;
     }
 
+    public int getProductPriceByName(String productName) {
+        return products.stream()
+                .filter(p -> p.getName().equals(productName))
+                .findFirst()
+                .map(Product::getPrice)
+                .orElse(0);
+    }
+
     public List<Product> getPromotionalProductsByName(String productName) {
         return products.stream()
                 .filter(p -> p.getName().equals(productName) && p.isPromotional())
@@ -47,13 +55,5 @@ public class Store {
         return getPromotionalProductsByName(productName).stream()
                 .mapToInt(Product::getQuantity)
                 .sum();
-    }
-
-    public int getProductPriceByName(String productName) {
-        return products.stream()
-                .filter(p -> p.getName().equals(productName))
-                .findFirst()
-                .map(Product::getPrice)
-                .orElse(0);
     }
 }
