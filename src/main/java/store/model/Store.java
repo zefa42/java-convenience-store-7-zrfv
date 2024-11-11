@@ -6,7 +6,7 @@ import java.util.stream.Collectors;
 public class Store {
     private final List<Product> products;
 
-    public Store(List<Product> products) {
+    public Store(final List<Product> products) {
         this.products = products;
     }
 
@@ -14,7 +14,7 @@ public class Store {
         return products;
     }
 
-    public int getProductPriceByName(String productName) {
+    public int getProductPriceByName(final String productName) {
         return products.stream()
                 .filter(p -> p.getName().equals(productName))
                 .findFirst()
@@ -22,32 +22,32 @@ public class Store {
                 .orElse(0);
     }
 
-    public List<Product> getPromotionalProductsByName(String productName) {
+    public List<Product> getPromotionalProductsByName(final String productName) {
         return products.stream()
                 .filter(p -> p.getName().equals(productName) && p.isPromotional())
                 .collect(Collectors.toList());
     }
 
-    public List<Product> getRegularProductsByName(String productName) {
+    public List<Product> getRegularProductsByName(final String productName) {
         return products.stream()
                 .filter(p -> p.getName().equals(productName) && !p.isPromotional())
                 .collect(Collectors.toList());
     }
 
-    public int getTotalAvailableQuantity(String productName) {
+    public int getTotalAvailableQuantity(final String productName) {
         return products.stream()
                 .filter(p -> p.getName().equals(productName))
                 .mapToInt(Product::getQuantity)
                 .sum();
     }
 
-    public int getTotalAvailablePromotionQuantity(String productName) {
+    public int getTotalAvailablePromotionQuantity(final String productName) {
         return getPromotionalProductsByName(productName).stream()
                 .mapToInt(Product::getQuantity)
                 .sum();
     }
 
-    public boolean isProductPromotional(String productName) {
+    public boolean isProductPromotional(final String productName) {
         return products.stream()
                 .filter(p -> p.getName().equals(productName))
                 .anyMatch(Product::isPromotional);

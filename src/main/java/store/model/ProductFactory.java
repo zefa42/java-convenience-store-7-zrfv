@@ -10,7 +10,7 @@ public class ProductFactory {
     public static final String EMPTY_PRODUCT_ORANGE_JUICE = "오렌지주스";
     public static final String EMPTY_PRODUCT_SPARKLING_WATER = "탄산수";
 
-    public static List<Product> init(List<String> rawProduct) {
+    public static List<Product> init(final List<String> rawProduct) {
         List<Product> products = new ArrayList<>();
         for (String line : rawProduct) {
             String[] parts = Splitter.split(line);
@@ -23,7 +23,7 @@ public class ProductFactory {
         return products;
     }
 
-    private static void addMissingProduct(List<Product> products, String[] parts) {
+    private static void addMissingProduct(final List<Product> products, final String[] parts) {
         if(parts[0].equals(EMPTY_PRODUCT_ORANGE_JUICE)) {
             products.add(new Product(parts[0], Converter.stringToInt(parts[1]), 0, null));
         }

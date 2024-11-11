@@ -9,7 +9,7 @@ public class ProductName {
     private ProductName() {
     }
 
-    public static void add(String name) {
+    public static void add(final String name) {
         names.add(name);
     }
 

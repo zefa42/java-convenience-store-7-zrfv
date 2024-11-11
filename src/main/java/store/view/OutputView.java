@@ -25,14 +25,14 @@ public class OutputView {
         System.out.println(WELCOME_MESSAGE);
     }
 
-    public void printProduct(Store store) {
+    public void printProduct(final Store store) {
         for (Product product : store.getProducts()) {
             System.out.println(product);
         }
         System.out.println();
     }
 
-    public void printOrderResult(Order order, int totalAmount, int promotionDiscount, int membershipDiscount) {
+    public void printOrderResult(final Order order, final int totalAmount, final int promotionDiscount, int membershipDiscount) {
         System.out.println(order.getOrderSummary(totalAmount, promotionDiscount, membershipDiscount));
     }
 }

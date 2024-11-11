@@ -26,7 +26,7 @@ public class Promotion {
         this.end_date = end_date;
     }
 
-    public static void init(List<String> rawPromotion) {
+    public static void init(final List<String> rawPromotion) {
         promotions = new ArrayList<>();
         for (String line : rawPromotion) {
             String[] parts = Splitter.split(line);
@@ -38,7 +38,7 @@ public class Promotion {
         }
     }
 
-    public static Optional<Promotion> getPromotionByName(String promotionName) {
+    public static Optional<Promotion> getPromotionByName(final String promotionName) {
         LocalDate currentDate = LocalDate.from(DateTimes.now());
         return promotions.stream()
                 .filter(promo -> promo.getName().equals(promotionName)

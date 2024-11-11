@@ -43,7 +43,7 @@ public class Order {
         validateQuantity();
     }
 
-    private void parsePurchases(String input) {
+    private void parsePurchases(final String input) {
         String[] items = Splitter.split(input);
         for (String item : items) {
             Matcher matcher = PURCHASE_PATTERN.matcher(item);
@@ -53,7 +53,7 @@ public class Order {
         }
     }
 
-    public void validatePurchaseFormat(String input) {
+    public void validatePurchaseFormat(final String input) {
         String[] items = Splitter.split(input);
         for (String item : items) {
             Matcher matcher = PURCHASE_PATTERN.matcher(item);
@@ -77,20 +77,20 @@ public class Order {
         }
     }
 
-    private void validateProductQuantity(Purchase purchase) {
+    private void validateProductQuantity(final Purchase purchase) {
         validateZeroQuantity(purchase.getQuantity());
         if (purchase.getQuantity() > store.getTotalAvailableQuantity(purchase.getProductName())) {
             throw new IllegalArgumentException(INVALID_QUANTITY);
         }
     }
 
-    private void validateZeroQuantity(int quantity) {
+    private void validateZeroQuantity(final int quantity) {
         if (quantity < 1) {
             throw new IllegalArgumentException(NOT_POSITIVE_QUANTITY);
         }
     }
 
-    public void adjustPurchasesForPromotion(InputView inputView) {
+    public void adjustPurchasesForPromotion(final InputView inputView) {
         for (Purchase purchase : purchases) {
             String productName = purchase.getProductName();
             int totalQuantity = purchase.getPurchasedQuantity();
@@ -154,7 +154,7 @@ public class Order {
         }
     }
 
-    private void reduceNonPromotion(int remainingPurchased, String productName) {
+    private void reduceNonPromotion(int remainingPurchased, final String productName) {
         if (remainingPurchased > 0) {
             remainingPurchased = reduceProductStock(productName, remainingPurchased, false);
             if (remainingPurchased > 0) {
@@ -163,24 +163,24 @@ public class Order {
         }
     }
 
-    private void askNoPromotion(int freeQuantity, String productName, Purchase purchase) {
+    private void askNoPromotion(final int freeQuantity, final String productName, final Purchase purchase) {
         if (freeQuantity > 0) {
             int remainingFree = reduceProductStock(productName, freeQuantity, true);
-            if (remainingFree > 0) {
+            if (remainingFree < 0) {
                 System.out.printf(ASK_NO_PROMOTION, productName, remainingFree);
                 purchase.setFreeQuantity(freeQuantity - remainingFree);
             }
         }
     }
 
-    private List<Product> isPromotion(String productName, boolean isPromotion) {
+    private List<Product> isPromotion(final String productName, final boolean isPromotion) {
         if (isPromotion) {
             return store.getPromotionalProductsByName(productName);
         }
         return store.getRegularProductsByName(productName);
     }
 
-    private int reduceProductStock(String productName, int quantity, boolean isPromotion) {
+    private int reduceProductStock(final String productName, final int quantity, final boolean isPromotion) {
         List<Product> products = isPromotion(productName, isPromotion);
         int remainingQuantity = quantity;
         for (Product product : products) {
@@ -211,7 +211,7 @@ public class Order {
         return discount;
     }
 
-    public int calculateMembershipDiscount(boolean isMember) {
+    public int calculateMembershipDiscount(final boolean isMember) {
         if (!isMember) {
             return 0;
         }
@@ -224,7 +224,7 @@ public class Order {
         return Math.min((int) (nonPromotionalAmount * MEMBERSHIP_DISCOUNT), MAX_MEMBERSHIP_DISCOUNT);
     }
 
-    public String getOrderSummary(int totalAmount, int promotionDiscount, int membershipDiscount) {
+    public String getOrderSummary(final int totalAmount, final int promotionDiscount, final int membershipDiscount) {
         StringBuilder receipt = new StringBuilder();
         setReceiptPurchase(receipt);
         setReceiptPromotion(receipt);
@@ -232,7 +232,7 @@ public class Order {
         return receipt.toString();
     }
 
-    private void setReceiptPurchase(StringBuilder receipt) {
+    private void setReceiptPurchase(final StringBuilder receipt) {
         receipt.append(RECEIPT_STORE_NAME);
         receipt.append(RECEIPT_TITLE);
         for (Purchase purchase : purchases) {
@@ -242,7 +242,7 @@ public class Order {
         }
     }
 
-    private void setReceiptPromotion(StringBuilder receipt) {
+    private void setReceiptPromotion(final StringBuilder receipt) {
         receipt.append(RECEIPT_PROMOTION_TITLE);
         for (Purchase purchase : purchases) {
             int freeQuantity = purchase.getFreeQuantity();
@@ -253,7 +253,7 @@ public class Order {
         }
     }
 
-    private void setReceiptResult(StringBuilder receipt, int totalAmount, int promotionDiscount, int membershipDiscount) {
+    private void setReceiptResult(final StringBuilder receipt, final int totalAmount, final int promotionDiscount, final int membershipDiscount) {
         receipt.append(RECEIPT_RESULT_LINE);
         int finalAmount = totalAmount - promotionDiscount - membershipDiscount;
         receipt.append(String.format(RECEIPT_TOTAL_MONEY, getTotalQuantity(), totalAmount));

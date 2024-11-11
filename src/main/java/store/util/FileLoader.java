@@ -10,7 +10,7 @@ import java.util.List;
 
 public class FileLoader {
 
-    public static List<String> load(String path) throws IOException {
+    public static List<String> load(final String path) throws IOException {
         List<String> rawProducts = new ArrayList<>();
         try (BufferedReader br = new BufferedReader(readFile(path))) {
             br.readLine();
@@ -22,7 +22,7 @@ public class FileLoader {
         return rawProducts;
     }
 
-    private static FileReader readFile(String path) throws FileNotFoundException {
+    private static FileReader readFile(final String path) throws FileNotFoundException {
         return new FileReader(new File(path));
     }
 }

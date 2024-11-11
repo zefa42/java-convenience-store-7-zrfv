@@ -22,7 +22,7 @@ public class Product {
         return quantity;
     }
 
-    public void reduceQuantity(int amount) {
+    public void reduceQuantity(final int amount) {
         quantity -= amount;
     }
 

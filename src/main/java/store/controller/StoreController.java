@@ -31,7 +31,7 @@ public class StoreController {
         }
     }
 
-    private Order readPurchase(Store store) {
+    private Order readPurchase(final Store store) {
         try {
             return new Order(inputView.inputPurchase(), store);
         }catch (IllegalArgumentException e) {

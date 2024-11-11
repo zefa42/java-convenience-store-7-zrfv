@@ -5,16 +5,16 @@ public class Purchase {
     private int quantity;
     private int freeQuantity = 0;
 
-    public Purchase(String productName, int quantity) {
+    public Purchase(final String productName, final int quantity) {
         this.productName = productName;
         this.quantity = quantity;
     }
 
-    public void setPurchasedQuantity(int quantity) {
+    public void setPurchasedQuantity(final int quantity) {
         this.quantity = quantity;
     }
 
-    public void setFreeQuantity(int freeQuantity) {
+    public void setFreeQuantity(final int freeQuantity) {
         this.freeQuantity = freeQuantity;
     }
 
