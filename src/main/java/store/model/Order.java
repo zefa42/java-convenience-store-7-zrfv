@@ -190,7 +190,9 @@ public class Order {
     public int calculateTotalAmount() {
         int totalMoney = 0;
         for (Purchase purchase : purchases) {
-            totalMoney += store.getProductPriceByName(purchase.getProductName()) * purchase.getPurchasedQuantity() + purchase.getFreeQuantity();
+            String productName = purchase.getProductName();
+            int totalQuantity = purchase.getPurchasedQuantity() + purchase.getFreeQuantity();
+            totalMoney += store.getProductPriceByName(productName) * totalQuantity;
         }
         return totalMoney;
     }
@@ -222,11 +224,8 @@ public class Order {
         receipt.append(RECEIPT_TITLE);
         for (Purchase purchase : purchases) {
             String productName = purchase.getProductName();
-            int purchasedQuantity = purchase.getPurchasedQuantity();
-            int freeQuantity = purchase.getFreeQuantity();
-            int totalQuantity = purchasedQuantity + freeQuantity;
-            int price = store.getProductPriceByName(productName);
-            int totalPrice = price * totalQuantity; // 총 금액
+            int totalQuantity = purchase.getPurchasedQuantity() + purchase.getFreeQuantity();
+            int totalPrice =  store.getProductPriceByName(productName) * totalQuantity;
             receipt.append(String.format(RECEIPT_PURCHASE_STATUS, productName, totalQuantity, totalPrice));
         }
         receipt.append(RECEIPT_PROMOTION_TITLE);
