@@ -148,21 +148,27 @@ public class Order {
             String productName = purchase.getProductName();
             int purchasedQuantity = purchase.getPurchasedQuantity();
             int freeQuantity = purchase.getFreeQuantity();
-
             int remainingPurchased = reduceProductStock(productName, purchasedQuantity, true);
-            if (remainingPurchased > 0) {
-                remainingPurchased = reduceProductStock(productName, remainingPurchased, false);
-                if (remainingPurchased > 0) {
-                    throw new IllegalArgumentException(INVALID_QUANTITY);
-                }
-            }
+            reduceNonPromotion(remainingPurchased, productName);
+            askNoPromotion(freeQuantity, productName, purchase);
+        }
+    }
 
-            if (freeQuantity > 0) {
-                int remainingFree = reduceProductStock(productName, freeQuantity, true);
-                if (remainingFree > 0) {
-                    System.out.printf(ASK_NO_PROMOTION, productName, remainingFree);
-                    purchase.setFreeQuantity(freeQuantity - remainingFree);
-                }
+    private void reduceNonPromotion(int remainingPurchased, String productName) {
+        if (remainingPurchased > 0) {
+            remainingPurchased = reduceProductStock(productName, remainingPurchased, false);
+            if (remainingPurchased > 0) {
+                throw new IllegalArgumentException(INVALID_QUANTITY);
+            }
+        }
+    }
+
+    private void askNoPromotion(int freeQuantity, String productName, Purchase purchase) {
+        if (freeQuantity > 0) {
+            int remainingFree = reduceProductStock(productName, freeQuantity, true);
+            if (remainingFree > 0) {
+                System.out.printf(ASK_NO_PROMOTION, productName, remainingFree);
+                purchase.setFreeQuantity(freeQuantity - remainingFree);
             }
         }
     }
@@ -220,14 +226,23 @@ public class Order {
 
     public String getOrderSummary(int totalAmount, int promotionDiscount, int membershipDiscount) {
         StringBuilder receipt = new StringBuilder();
+        setReceiptPurchase(receipt);
+        setReceiptPromotion(receipt);
+        setReceiptResult(receipt, totalAmount, promotionDiscount, membershipDiscount);
+        return receipt.toString();
+    }
+
+    private void setReceiptPurchase(StringBuilder receipt) {
         receipt.append(RECEIPT_STORE_NAME);
         receipt.append(RECEIPT_TITLE);
         for (Purchase purchase : purchases) {
             String productName = purchase.getProductName();
             int totalQuantity = purchase.getPurchasedQuantity() + purchase.getFreeQuantity();
-            int totalPrice =  store.getProductPriceByName(productName) * totalQuantity;
-            receipt.append(String.format(RECEIPT_PURCHASE_STATUS, productName, totalQuantity, totalPrice));
+            receipt.append(String.format(RECEIPT_PURCHASE_STATUS, productName, totalQuantity, store.getProductPriceByName(productName) * totalQuantity));
         }
+    }
+
+    private void setReceiptPromotion(StringBuilder receipt) {
         receipt.append(RECEIPT_PROMOTION_TITLE);
         for (Purchase purchase : purchases) {
             int freeQuantity = purchase.getFreeQuantity();
@@ -236,13 +251,15 @@ public class Order {
                 receipt.append(String.format(RECEIPT_PROMOTION_STATUS, productName, freeQuantity));
             }
         }
+    }
+
+    private void setReceiptResult(StringBuilder receipt, int totalAmount, int promotionDiscount, int membershipDiscount) {
         receipt.append(RECEIPT_RESULT_LINE);
         int finalAmount = totalAmount - promotionDiscount - membershipDiscount;
         receipt.append(String.format(RECEIPT_TOTAL_MONEY, getTotalQuantity(), totalAmount));
         receipt.append(String.format(RECEIPT_PROMOTION_DISCOUNT, promotionDiscount));
         receipt.append(String.format(RECEIPT_MEMBERSHIP_DISCOUNT, membershipDiscount));
         receipt.append(String.format(RECEIPT_PURCHASE_MONEY, finalAmount));
-        return receipt.toString();
     }
 
     public int getTotalQuantity() {

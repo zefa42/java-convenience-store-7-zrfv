@@ -1,12 +1,12 @@
 package store.model;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+
 import org.junit.jupiter.api.Test;
 import store.util.FileLoader;
 
 import java.io.IOException;
 import java.util.List;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
 
 class ProductTest {
 
