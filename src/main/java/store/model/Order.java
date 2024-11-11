@@ -19,7 +19,6 @@ import java.util.regex.Pattern;
 import store.util.Converter;
 import store.util.Splitter;
 import store.view.InputView;
-import store.view.OutputView;
 
 public class Order {
     private static final Pattern PURCHASE_PATTERN = Pattern.compile("\\[(\\S+)-(\\d+)]");
@@ -49,9 +48,7 @@ public class Order {
         for (String item : items) {
             Matcher matcher = PURCHASE_PATTERN.matcher(item);
             if (matcher.matches()) {
-                String productName = matcher.group(1);
-                int quantity = Converter.stringToInt(matcher.group(2));
-                purchases.add(new Purchase(productName, quantity));
+                purchases.add(new Purchase(matcher.group(1), Converter.stringToInt(matcher.group(2))));
             }
         }
     }
@@ -81,13 +78,8 @@ public class Order {
     }
 
     private void validateProductQuantity(Purchase purchase) {
-        String productName = purchase.getProductName();
-        int requestedQuantity = purchase.getQuantity();
-        validateZeroQuantity(requestedQuantity);
-
-        int availableQuantity = store.getTotalAvailableQuantity(productName);
-
-        if (requestedQuantity > availableQuantity) {
+        validateZeroQuantity(purchase.getQuantity());
+        if (purchase.getQuantity() > store.getTotalAvailableQuantity(purchase.getProductName())) {
             throw new IllegalArgumentException(INVALID_QUANTITY);
         }
     }
@@ -175,11 +167,15 @@ public class Order {
         }
     }
 
-    private int reduceProductStock(String productName, int quantity, boolean isPromotion) {
-        List<Product> products = isPromotion ?
-                store.getPromotionalProductsByName(productName) :
-                store.getRegularProductsByName(productName);
+    private List<Product> isPromotion(String productName, boolean isPromotion) {
+        if (isPromotion) {
+            return store.getPromotionalProductsByName(productName);
+        }
+        return store.getRegularProductsByName(productName);
+    }
 
+    private int reduceProductStock(String productName, int quantity, boolean isPromotion) {
+        List<Product> products = isPromotion(productName, isPromotion);
         int remainingQuantity = quantity;
         for (Product product : products) {
             if (remainingQuantity > 0) {
@@ -194,9 +190,7 @@ public class Order {
     public int calculateTotalAmount() {
         int totalMoney = 0;
         for (Purchase purchase : purchases) {
-            String productName = purchase.getProductName();
-            int totalQuantity = purchase.getPurchasedQuantity() + purchase.getFreeQuantity();
-            totalMoney += store.getProductPriceByName(productName) * totalQuantity;
+            totalMoney += store.getProductPriceByName(purchase.getProductName()) * purchase.getPurchasedQuantity() + purchase.getFreeQuantity();
         }
         return totalMoney;
     }
@@ -204,8 +198,7 @@ public class Order {
     public int calculatePromotionDiscount() {
         int discount = 0;
         for (Purchase purchase : purchases) {
-            String productName = purchase.getProductName();
-            discount += store.getProductPriceByName(productName) * purchase.getFreeQuantity();
+            discount += store.getProductPriceByName(purchase.getProductName()) * purchase.getFreeQuantity();
         }
         return discount;
     }
@@ -216,9 +209,8 @@ public class Order {
         }
         int nonPromotionalAmount = 0;
         for (Purchase purchase : purchases) {
-            String productName = purchase.getProductName();
-            if (!store.isProductPromotional(productName)) {
-                nonPromotionalAmount += store.getProductPriceByName(productName) * purchase.getPurchasedQuantity();
+            if (!store.isProductPromotional(purchase.getProductName())) {
+                nonPromotionalAmount += store.getProductPriceByName(purchase.getProductName()) * purchase.getPurchasedQuantity();
             }
         }
         return Math.min((int) (nonPromotionalAmount * MEMBERSHIP_DISCOUNT), MAX_MEMBERSHIP_DISCOUNT);
