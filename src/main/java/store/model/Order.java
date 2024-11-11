@@ -1,5 +1,15 @@
 package store.model;
 
+import static store.view.OutputView.RECEIPT_MEMBERSHIP_DISCOUNT;
+import static store.view.OutputView.RECEIPT_PROMOTION_DISCOUNT;
+import static store.view.OutputView.RECEIPT_PROMOTION_STATUS;
+import static store.view.OutputView.RECEIPT_PROMOTION_TITLE;
+import static store.view.OutputView.RECEIPT_PURCHASE_MONEY;
+import static store.view.OutputView.RECEIPT_PURCHASE_STATUS;
+import static store.view.OutputView.RECEIPT_RESULT_LINE;
+import static store.view.OutputView.RECEIPT_STORE_NAME;
+import static store.view.OutputView.RECEIPT_TITLE;
+import static store.view.OutputView.RECEIPT_TOTAL_MONEY;
 import static store.view.validator.InputValidator.PRODUCT_FORMAT_ERROR_MESSAGE;
 
 import java.util.*;
@@ -8,6 +18,7 @@ import java.util.regex.Pattern;
 import store.util.Converter;
 import store.util.Splitter;
 import store.view.InputView;
+import store.view.OutputView;
 
 public class Order {
     private static final Pattern PURCHASE_PATTERN = Pattern.compile("\\[(\\S+)-(\\d+)]");
@@ -211,9 +222,9 @@ public class Order {
     }
 
     public String getOrderSummary(int totalAmount, int promotionDiscount, int membershipDiscount) {
-        StringBuilder summary = new StringBuilder();
-        summary.append("==============W 편의점================\n");
-        summary.append("상품명\t\t\t\t수량\t\t\t금액\n");
+        StringBuilder receipt = new StringBuilder();
+        receipt.append(RECEIPT_STORE_NAME);
+        receipt.append(RECEIPT_TITLE);
         for (Purchase purchase : purchases) {
             String productName = purchase.getProductName();
             int purchasedQuantity = purchase.getPurchasedQuantity();
@@ -221,23 +232,23 @@ public class Order {
             int totalQuantity = purchasedQuantity + freeQuantity;
             int price = store.getProductPriceByName(productName);
             int totalPrice = price * totalQuantity; // 총 금액
-            summary.append(String.format("%s\t\t\t\t%d\t\t\t%,d\n", productName, totalQuantity, totalPrice));
+            receipt.append(String.format(RECEIPT_PURCHASE_STATUS, productName, totalQuantity, totalPrice));
         }
-        summary.append("=============증\t정===============\n");
+        receipt.append(RECEIPT_PROMOTION_TITLE);
         for (Purchase purchase : purchases) {
             int freeQuantity = purchase.getFreeQuantity();
             if (freeQuantity > 0) {
                 String productName = purchase.getProductName();
-                summary.append(String.format("%s\t\t\t\t%d\n", productName, freeQuantity));
+                receipt.append(String.format(RECEIPT_PROMOTION_STATUS, productName, freeQuantity));
             }
         }
-        summary.append("====================================\n");
+        receipt.append(RECEIPT_RESULT_LINE);
         int finalAmount = totalAmount - promotionDiscount - membershipDiscount;
-        summary.append(String.format("총구매액\t\t\t\t%d\t\t\t%,d\n", getTotalQuantity(), totalAmount));
-        summary.append(String.format("행사할인\t\t\t\t\t\t\t-%,d\n", promotionDiscount));
-        summary.append(String.format("멤버십할인\t\t\t\t\t\t-%,d\n", membershipDiscount));
-        summary.append(String.format("내실돈\t\t\t\t\t\t\t%,d\n", finalAmount));
-        return summary.toString();
+        receipt.append(String.format(RECEIPT_TOTAL_MONEY, getTotalQuantity(), totalAmount));
+        receipt.append(String.format(RECEIPT_PROMOTION_DISCOUNT, promotionDiscount));
+        receipt.append(String.format(RECEIPT_MEMBERSHIP_DISCOUNT, membershipDiscount));
+        receipt.append(String.format(RECEIPT_PURCHASE_MONEY, finalAmount));
+        return receipt.toString();
     }
 
     public int getTotalQuantity() {
