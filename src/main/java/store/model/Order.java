@@ -1,5 +1,6 @@
 package store.model;
 
+import static store.view.InputView.CONFIRM;
 import static store.view.OutputView.RECEIPT_MEMBERSHIP_DISCOUNT;
 import static store.view.OutputView.RECEIPT_PROMOTION_DISCOUNT;
 import static store.view.OutputView.RECEIPT_PROMOTION_STATUS;
@@ -25,8 +26,10 @@ public class Order {
     private static final String INVALID_PRODUCT_NAME = "[ERROR] 존재하지 않는 상품입니다. 다시 입력해 주세요.";
     private static final String INVALID_QUANTITY = "[ERROR] 재고 수량을 초과하여 구매할 수 없습니다. 다시 입력해 주세요.";
     private static final String NOT_POSITIVE_QUANTITY = "[ERROR] 잘못된 입력입니다. 다시 입력해 주세요.";
-    private static final String ADD_ADDITIONAL_PROMOTION = "현재 %s은(는) %d개를 무료로 받으실 수 있습니다. 추가하시겠습니까? (Y/N)\n";
+    private static final String ADD_ADDITIONAL_PROMOTION = "현재 %s은(는) %d개를 무료로 더 받으실 수 있습니다. 추가하시겠습니까? (Y/N)\n";
     private static final String ASK_NO_PROMOTION = "현재 %s %d개는 프로모션 할인이 적용되지 않습니다. 그래도 구매하시겠습니까? (Y/N)\n";
+    private static final double MEMBERSHIP_DISCOUNT = 0.3;
+    private static final int MAX_MEMBERSHIP_DISCOUNT = 8000;
 
     private final String inputPurchase;
     private final Store store;
@@ -131,7 +134,7 @@ public class Order {
                             System.out.println(e.getMessage());
                         }
                     }
-                    if (response.equals("Y")) {
+                    if (response.equals(CONFIRM)) {
                         purchasedQuantity += promotionBuy;
                         freeQuantity += promotionGet;
                         numberOfPromotions += 1;
@@ -218,7 +221,7 @@ public class Order {
                 nonPromotionalAmount += store.getProductPriceByName(productName) * purchase.getPurchasedQuantity();
             }
         }
-        return Math.min((int) (nonPromotionalAmount * 0.3), 8000);
+        return Math.min((int) (nonPromotionalAmount * MEMBERSHIP_DISCOUNT), MAX_MEMBERSHIP_DISCOUNT);
     }
 
     public String getOrderSummary(int totalAmount, int promotionDiscount, int membershipDiscount) {

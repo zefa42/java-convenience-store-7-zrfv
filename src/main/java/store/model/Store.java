@@ -41,16 +41,6 @@ public class Store {
                 .sum();
     }
 
-    public int getMaxPromotionApplications(String productName, Promotion promotion) {
-        int availablePromotionStock = getTotalAvailablePromotionQuantity(productName);
-        int availablePurchaseStock = getTotalAvailableQuantity(productName);
-
-        int maxByPromotionStock = availablePromotionStock / promotion.getGet();
-        int maxByPurchaseStock = availablePurchaseStock / promotion.getBuy();
-
-        return Math.min(maxByPromotionStock, maxByPurchaseStock);
-    }
-
     public int getTotalAvailablePromotionQuantity(String productName) {
         return getPromotionalProductsByName(productName).stream()
                 .mapToInt(Product::getQuantity)
